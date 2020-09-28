@@ -1,0 +1,11 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "stateful-tally",
+    hdrs = ["stout/stateful-tally.h"],
+    deps = [
+        "@stout-atomic-backoff//:atomic-backoff",
+        "@com_github_google_glog//:glog",
+    ],
+    visibility = ["//visibility:public"],
+)

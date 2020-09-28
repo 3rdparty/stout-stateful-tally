@@ -1,0 +1,10 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
+cc_test(
+    name = "stateful-tally",
+    srcs = ["stateful-tally.cc"],
+    deps = [
+        "//:stateful-tally",
+        "@gtest//:gtest_main",
+    ],
+)
