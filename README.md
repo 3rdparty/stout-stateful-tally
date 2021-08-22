@@ -6,7 +6,9 @@ Follows a "repos/deps" pattern (in order to help with recursive dependencies). T
 
 1. Copy `bazel/repos.bzl` into your repository at `3rdparty/stout-stateful-tally/repos.bzl` and add an empty `BUILD` (or `BUILD.bazel`) to `3rdparty/stout-stateful-tally` as well.
 
-2. Either ... add the following to your `WORKSPACE` (or `WORKSPACE.bazel`):
+2. Copy all of the directories from `3rdparty` that you ***don't*** already have in ***your*** repository's `3rdparty` directory (if applicable).
+
+3. Either ... add the following to your `WORKSPACE` (or `WORKSPACE.bazel`):
 
 ```bazel
 load("//3rdparty/stout-stateful-tally:repos.bzl", stout_stateful_tally_repos="repos")
