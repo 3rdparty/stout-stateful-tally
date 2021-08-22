@@ -14,7 +14,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 load("//3rdparty/stout-atomic-backoff:repos.bzl", stout_atomic_backoff_repos="repos")
 
 def repos(external = True, repo_mapping = {}):
-    stout_atomic_backoff_repos()
+    stout_atomic_backoff_repos(
+        repo_mapping = repo_mapping
+    )
     
     if external and "com_github_3rdparty_stout_stateful_tally" not in native.existing_rules():
         git_repository(

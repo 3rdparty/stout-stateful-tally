@@ -2,22 +2,28 @@
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+load("@com_github_3rdparty_stout_atomic_backoff//bazel:deps.bzl", stout_atomic_backoff_deps="deps")
+
 def deps(repo_mapping = {}):
-  if "com_github_gflags_gflags" not in native.existing_rules():
-    http_archive(
-        name = "com_github_gflags_gflags",
-        url = "https://github.com/gflags/gflags/archive/v2.2.2.tar.gz",
-        sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
-        strip_prefix = "gflags-2.2.2",
+    stout_atomic_backoff_deps(
+        repo_mapping = repo_mapping
     )
 
-  if "com_github_google_glog" not in native.existing_rules():
-    http_archive(
-        name = "com_github_google_glog",
-        url = "https://github.com/google/glog/archive/v0.4.0.tar.gz",
-        sha256 = "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c",
-        strip_prefix = "glog-0.4.0",
-    )
+    if "com_github_gflags_gflags" not in native.existing_rules():
+        http_archive(
+            name = "com_github_gflags_gflags",
+            url = "https://github.com/gflags/gflags/archive/v2.2.2.tar.gz",
+            sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
+            strip_prefix = "gflags-2.2.2",
+        )
+
+    if "com_github_google_glog" not in native.existing_rules():
+        http_archive(
+            name = "com_github_google_glog",
+            url = "https://github.com/google/glog/archive/v0.4.0.tar.gz",
+            sha256 = "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c",
+            strip_prefix = "glog-0.4.0",
+        )
 
     if "com_github_google_googletest" not in native.existing_rules():
         http_archive(
