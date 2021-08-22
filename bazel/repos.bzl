@@ -20,7 +20,7 @@ def repos(external = True, repo_mapping = {}):
         git_repository(
             name = "com_github_3rdparty_stout_stateful_tally",
             remote = "https://github.com/3rdparty/stout-stateful-tally",
-            commit = "",
-            shallow_since = " +0200",
+            commit = "19e88a688df0e2bfaf976545b4f5661eec7d421d",
+            shallow_since = "1629610177 +0200",
             repo_mapping = repo_mapping,
         )
