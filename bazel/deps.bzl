@@ -1,8 +1,8 @@
-"""Load dependencies needed to compile and test the library as a 3rd-party consumer."""
+"""Dependency specific initialization."""
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-def stout_stateful_tally_deps():
+def deps(repo_mapping = {}):
   if "com_github_gflags_gflags" not in native.existing_rules():
     http_archive(
         name = "com_github_gflags_gflags",
@@ -19,10 +19,11 @@ def stout_stateful_tally_deps():
         strip_prefix = "glog-0.4.0",
     )
 
-  if "stout-atomic-backoff" not in native.existing_rules():
-    http_archive(
-       name = "stout-atomic-backoff",
-       url = "https://github.com/3rdparty/stout-atomic-backoff/archive/0.1.0.tar.gz",
-       sha256 = "f705ae3475aa2a5011df9bcb04a7c7425e4339449f366780c15251fa8cbd3758",
-       strip_prefix = "stout-atomic-backoff-0.1.0",
-    )
+    if "com_github_google_googletest" not in native.existing_rules():
+        http_archive(
+            name = "com_github_google_googletest",
+            url = "https://github.com/google/googletest/archive/release-1.10.0.tar.gz",
+            sha256 = "9dc9157a9a1551ec7a7e43daea9a694a0bb5fb8bec81235d8a1e6ef64c716dcb",
+            strip_prefix = "googletest-release-1.10.0",
+            repo_mapping = repo_mapping,
+        )

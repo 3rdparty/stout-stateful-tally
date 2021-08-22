@@ -10,31 +10,26 @@
 namespace stout {
 
 template <typename S>
-struct stateful_tally
-{
+struct StatefulTally {
   static_assert(
       sizeof(S) == sizeof(unsigned char),
       "State must be representable in a single byte");
 
-  stateful_tally(S s)
-  {
+  StatefulTally(S s) {
     value.store(size_t(s) << ((sizeof(size_t) - 1) * 8));
   }
 
-  size_t count() const
-  {
+  size_t count() const {
     return (value.load() << 8) >> 8;
   }
 
-  S state() const
-  {
+  S state() const {
     return S(value.load() >> ((sizeof(size_t) - 1) * 8));
   }
 
   template <typename Predicate>
-  std::pair<S, size_t> wait(Predicate&& predicate)
-  {
-    for (atomic_backoff b; ; b.pause()) {
+  std::pair<S, size_t> Wait(Predicate&& predicate) {
+    for (AtomicBackoff b; ; b.pause()) {
       size_t loaded = value.load();
 
       size_t count = (loaded << 8) >> 8;
@@ -46,12 +41,11 @@ struct stateful_tally
     }
   }
 
-  bool increment(S& expected)
-  {
+  bool Increment(S& expected) {
     size_t loaded = value.load();
     bool load = false;
 
-    for (atomic_backoff b; ; b.pause()) {
+    for (AtomicBackoff b; ; b.pause()) {
       if (load) {
         loaded = value.load();
         load = false;
@@ -73,7 +67,7 @@ struct stateful_tally
       }
 
       CHECK(count + 1 < (size_t(1) << ((sizeof(size_t) - 1) * 8)))
-        << "Count overflow";
+          << "Count overflow";
 
       if (!value.compare_exchange_weak(
               loaded,
@@ -85,11 +79,10 @@ struct stateful_tally
     }
   }
 
-  std::pair<S, size_t> decrement()
-  {
+  std::pair<S, size_t> Decrement() {
     size_t loaded = value.load();
 
-    for (atomic_backoff b; ; b.pause()) {
+    for (AtomicBackoff b; ; b.pause()) {
       size_t count = (loaded << 8) >> 8;
       size_t state = loaded >> ((sizeof(size_t) - 1) * 8);
 
@@ -107,14 +100,13 @@ struct stateful_tally
     }
   }
 
-  bool update(S& expected, S desired)
-  {
+  bool Update(S& expected, S desired) {
     CHECK(size_t(desired) <= 127) << "State is unrepresentable";
 
     size_t loaded = value.load();
     bool load = false;
 
-    for (atomic_backoff b; ; b.pause()) {
+    for (AtomicBackoff b; ; b.pause()) {
       if (load) {
         loaded = value.load();
         load = false;
@@ -145,14 +137,17 @@ struct stateful_tally
     }
   }
 
-  bool update(S& expected, size_t& countexpected, S desired, size_t countdesired)
-  {
+  bool Update(
+      S& expected,
+      size_t& countexpected,
+      S desired,
+      size_t countdesired) {
     CHECK(size_t(desired) <= 127) << "State is unrepresentable";
 
     size_t loaded = value.load();
     bool load = false;
 
-    for (atomic_backoff b; ; b.pause()) {
+    for (AtomicBackoff b; ; b.pause()) {
       if (load) {
         loaded = value.load();
         load = false;
@@ -188,14 +183,13 @@ struct stateful_tally
   }
 
   template <typename F>
-  bool reset(S& expected, S desired, F&& f)
-  {
+  bool Reset(S& expected, S desired, F&& f) {
     CHECK(size_t(desired) <= 127) << "State is unrepresentable";
 
     size_t loaded = value.load();
     bool load = false;
 
-    for (atomic_backoff b; ; b.pause()) {
+    for (AtomicBackoff b; ; b.pause()) {
       if (load) {
         loaded = value.load();
         load = false;
@@ -206,7 +200,6 @@ struct stateful_tally
 
       if (state & 128) {
         load = true;
-        // std::cout << "waiting on reset (reset)\n";
         continue;
       }
 
@@ -221,7 +214,7 @@ struct stateful_tally
         continue;
       }
 
-      for (atomic_backoff b; ; b.pause()) {
+      for (AtomicBackoff b; ; b.pause()) {
         if (count > 0) {
           loaded = value.load();
           count = (loaded << 8) >> 8;
@@ -246,4 +239,4 @@ struct stateful_tally
   std::atomic<size_t> value = 0;
 };
 
-} // namespace stout {
+} // namespace stout
