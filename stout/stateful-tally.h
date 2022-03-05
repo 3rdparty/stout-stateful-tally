@@ -35,7 +35,7 @@ struct StatefulTally {
       size_t count = (loaded << 8) >> 8;
       size_t state = loaded >> ((sizeof(size_t) - 1) * 8);
 
-      if (predicate(state, count)) {
+      if (predicate(S(state), count)) {
         return std::make_pair(S(state), count);
       }
     }
