@@ -3,11 +3,14 @@
 #include <atomic>
 #include <utility> // For 'std::pair'.
 
+#include "glog/logging.h"
 #include "stout/atomic-backoff.h"
 
-#include "glog/logging.h"
+////////////////////////////////////////////////////////////////////////
 
 namespace stout {
+
+////////////////////////////////////////////////////////////////////////
 
 template <typename S>
 struct StatefulTally {
@@ -29,7 +32,7 @@ struct StatefulTally {
 
   template <typename Predicate>
   std::pair<S, size_t> Wait(Predicate&& predicate) {
-    for (AtomicBackoff b; ; b.pause()) {
+    for (AtomicBackoff b;; b.pause()) {
       size_t loaded = value.load();
 
       size_t count = (loaded << 8) >> 8;
@@ -45,7 +48,7 @@ struct StatefulTally {
     size_t loaded = value.load();
     bool load = false;
 
-    for (AtomicBackoff b; ; b.pause()) {
+    for (AtomicBackoff b;; b.pause()) {
       if (load) {
         loaded = value.load();
         load = false;
@@ -82,7 +85,7 @@ struct StatefulTally {
   std::pair<S, size_t> Decrement() {
     size_t loaded = value.load();
 
-    for (AtomicBackoff b; ; b.pause()) {
+    for (AtomicBackoff b;; b.pause()) {
       size_t count = (loaded << 8) >> 8;
       size_t state = loaded >> ((sizeof(size_t) - 1) * 8);
 
@@ -106,7 +109,7 @@ struct StatefulTally {
     size_t loaded = value.load();
     bool load = false;
 
-    for (AtomicBackoff b; ; b.pause()) {
+    for (AtomicBackoff b;; b.pause()) {
       if (load) {
         loaded = value.load();
         load = false;
@@ -147,7 +150,7 @@ struct StatefulTally {
     size_t loaded = value.load();
     bool load = false;
 
-    for (AtomicBackoff b; ; b.pause()) {
+    for (AtomicBackoff b;; b.pause()) {
       if (load) {
         loaded = value.load();
         load = false;
@@ -174,7 +177,8 @@ struct StatefulTally {
 
       if (!value.compare_exchange_weak(
               loaded,
-              (size_t(desired) << ((sizeof(size_t) - 1) * 8)) | countdesired)) {
+              (size_t(desired) << ((sizeof(size_t) - 1) * 8))
+                  | countdesired)) {
         continue;
       }
 
@@ -189,7 +193,7 @@ struct StatefulTally {
     size_t loaded = value.load();
     bool load = false;
 
-    for (AtomicBackoff b; ; b.pause()) {
+    for (AtomicBackoff b;; b.pause()) {
       if (load) {
         loaded = value.load();
         load = false;
@@ -214,7 +218,7 @@ struct StatefulTally {
         continue;
       }
 
-      for (AtomicBackoff b; ; b.pause()) {
+      for (AtomicBackoff b;; b.pause()) {
         if (count > 0) {
           loaded = value.load();
           count = (loaded << 8) >> 8;
@@ -239,4 +243,8 @@ struct StatefulTally {
   std::atomic<size_t> value = 0;
 };
 
+////////////////////////////////////////////////////////////////////////
+
 } // namespace stout
+
+////////////////////////////////////////////////////////////////////////

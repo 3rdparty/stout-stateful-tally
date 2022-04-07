@@ -1,17 +1,14 @@
-#include "gtest/gtest.h"
-
 #include "stout/stateful-tally.h"
 
-enum class State : uint8_t
-{
+#include "gtest/gtest.h"
+
+enum class State : uint8_t {
   Readers,
   ReadersWithWriterWaiting,
   Writer,
 };
 
-
-TEST(StatefulTallyTest, Test)
-{
+TEST(StatefulTallyTest, Test) {
   stout::StatefulTally<State> tally(State::Readers);
 
   State state = State::Readers;
